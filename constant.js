@@ -1,5 +1,5 @@
 export const constant = {
-  ROW: 3,
+  ROW: 9,
   COLUMN: 12,
-  double: 60,
+  double: 40,
 };

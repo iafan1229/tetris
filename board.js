@@ -4,11 +4,11 @@ import { initPiece } from "./piece.js";
 function board(ctx, color, initPiece) {
   initPiece.forEach((row, columnIdx) => {
     row.forEach((el, rowIdx) => {
-      console.log(rowIdx, columnIdx);
-      if (el === 1) {
+      console.log(el);
+      if (el >= 1) {
         ctx.fillStyle = color;
         ctx.fillRect(
-          rowIdx * constant.double,
+          (rowIdx + 3) * constant.double,
           columnIdx * constant.double,
           constant.double,
           constant.double
