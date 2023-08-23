@@ -59,7 +59,5 @@ class Piece {
 		);
 	}
 }
-// console.table(shuffle());
 const a = new Piece(randomNumber());
-console.log(a);
 export const initPiece = a.initBlock;

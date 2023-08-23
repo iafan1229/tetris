@@ -1,16 +1,22 @@
+// board.js
 import { constant } from './constant.js';
-import { initPiece } from './piece.js';
+import { initPiece as piece } from './piece.js';
 
-function board(ctx, color, initPiece) {
-	initPiece.forEach((row, columnIdx) => {
+export function drawBoard(x, y, ctx) {
+	ctx.clearRect(
+		0,
+		0,
+		constant.ROW * constant.double,
+		constant.COLUMN * constant.double
+	);
+	piece.forEach((row, columnIdx) => {
 		row.forEach((el, rowIdx) => {
-			console.log(el);
 			if (el >= 1) {
-				const colorVariable = Object.values(constant.colors[el - 1])[0];
+				let colorVariable = Object.values(constant.colors[el - 1])[0];
 				ctx.fillStyle = colorVariable;
 				ctx.fillRect(
-					(rowIdx + 2) * constant.double,
-					columnIdx * constant.double,
+					x + (rowIdx + 4) * constant.double,
+					y + columnIdx * constant.double,
 					constant.double,
 					constant.double
 				);
@@ -18,14 +24,3 @@ function board(ctx, color, initPiece) {
 		});
 	});
 }
-
-function setBoard(canvas) {
-	canvas.width = constant.ROW * constant.double;
-	canvas.height = constant.COLUMN * constant.double;
-}
-
-const canvas = document.getElementById('myCanvas');
-const ctx = canvas.getContext('2d');
-
-setBoard(canvas);
-export default board(ctx, 'blue', initPiece);
