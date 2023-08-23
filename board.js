@@ -9,7 +9,7 @@ function board(ctx, color, initPiece) {
 				const colorVariable = Object.values(constant.colors[el - 1])[0];
 				ctx.fillStyle = colorVariable;
 				ctx.fillRect(
-					(rowIdx + 3) * constant.double,
+					(rowIdx + 2) * constant.double,
 					columnIdx * constant.double,
 					constant.double,
 					constant.double
