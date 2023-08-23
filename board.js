@@ -2,6 +2,22 @@
 import { constant } from './constant.js';
 import { initPiece as piece } from './piece.js';
 
+let direction = [];
+let key;
+//키 누를시 마다 1로 변함
+let keyFlag = [0, 0, 0, 0];
+
+function isValid() {
+	if (
+		direction.some((el) => Math.abs(el) === 10) ||
+		direction.some((el) => Math.abs(el) === 430)
+	) {
+		return false;
+	}
+
+	return true;
+}
+
 export function setCanvas(canvas, ctx) {
 	let x = 0;
 	let y = 0;
@@ -11,26 +27,32 @@ export function setCanvas(canvas, ctx) {
 }
 
 export function drawBoard(x, y, ctx) {
-	ctx.clearRect(
-		0,
-		0,
-		constant.ROW * constant.double,
-		constant.COLUMN * constant.double
-	);
-	piece.forEach((row, columnIdx) => {
-		row.forEach((el, rowIdx) => {
-			if (el >= 1) {
-				let colorVariable = Object.values(constant.colors[el - 1])[0];
-				ctx.fillStyle = colorVariable;
-				ctx.fillRect(
-					x + (rowIdx + 4) * constant.double,
-					y + columnIdx * constant.double,
-					constant.double,
-					constant.double
-				);
-			}
+	console.log(isValid());
+	// console.log(keyFlag);
+	if (isValid()) {
+		ctx.clearRect(
+			0,
+			0,
+			constant.ROW * constant.double,
+			constant.COLUMN * constant.double
+		);
+		direction = [];
+		piece.forEach((row, columnIdx) => {
+			row.forEach((el, rowIdx) => {
+				direction.push(x + (rowIdx + 4) * constant.double);
+				if (el >= 1) {
+					let colorVariable = Object.values(constant.colors[el - 1])[0];
+					ctx.fillStyle = colorVariable;
+					ctx.fillRect(
+						x + (rowIdx + 4) * constant.double,
+						y + columnIdx * constant.double,
+						constant.double,
+						constant.double
+					);
+				}
+			});
 		});
-	});
+	}
 }
 
 export function move() {
@@ -40,14 +62,22 @@ export function move() {
 	let y = 0;
 	return function moveClosure(event) {
 		if (event.key === 'ArrowLeft') {
-			x -= 10; // 왼쪽으로 이동
+			keyFlag = [1, 0, 0, 0];
+			if (keyFlag[0]) {
+				x -= 10;
+			} // 왼쪽으로 이동
 		} else if (event.key === 'ArrowRight') {
-			x += 10; // 오른쪽으로 이동
+			keyFlag = [0, 1, 0, 0];
+			if (keyFlag[1]) {
+				x += 10; // 오른쪽으로 이동
+			}
 		} else if (event.key === 'ArrowUp') {
-			y -= 10; // 위로 이동
+			if (keyFlag[2]) y -= 10; // 위로 이동
 		} else if (event.key === 'ArrowDown') {
-			y += 10; // 아래로 이동
+			if (keyFlag[3]) y += 10; // 아래로 이동
 		}
+		key = event.key;
+		console.log(key);
 		return { x, y };
 	};
 }
