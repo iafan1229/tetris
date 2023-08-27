@@ -47,8 +47,8 @@ export function animate(now, time) {
 		);
 		y += 20;
 
-		if (yDirection.some((el) => Math.abs(el) > 600)) {
-			canvas.freeze();
+		if (yDirection.some((el) => Math.abs(el) > 200)) {
+			canvas.freeze(x, y);
 			const newBlock = freeze(array);
 			blockArray.push(newBlock);
 			blockCount += 1;
@@ -63,7 +63,7 @@ export function animate(now, time) {
 			//------초기화 끝
 		}
 		drawBoard(x, y, ctx, array);
-		console.log(y);
+		// console.log(y);
 	}
 
 	const requestId = requestAnimationFrame(() =>
@@ -108,18 +108,11 @@ function isValid() {
 	}
 	//오른쪽 끝에 도달
 	if (
-		xDirection.some((el) => Math.abs(el) === 430) &&
+		xDirection.some((el) => Math.abs(el) === 360) &&
 		keyFlag.findIndex((el) => el === 1) === 1
 	) {
 		return false;
 	}
-	// if (
-	//   yDirection.some((el) => Math.abs(el) === 0) &&
-	//   keyFlag.findIndex((el) => el === 1) === 2
-	// ) {
-	//   return false;
-	// }
-	//block stacking
 	if (
 		yDirection.some((el) => Math.abs(el) === 800) &&
 		keyFlag.findIndex((el) => el === 1) === 3
@@ -155,6 +148,9 @@ export function drawBoard(x, y, ctx, block) {
 						constant.double,
 						constant.double
 					);
+					console.log(
+						Math.floor((x + rowIdx * constant.double) / constant.double)
+					);
 				}
 			});
 		});
@@ -163,7 +159,7 @@ export function drawBoard(x, y, ctx, block) {
 
 export function move(event) {
 	// 화살표 키 입력을 감지하고 블록을 이동합니다.
-	// (이 부분은 원하는 게임 논리로 변경해야 합니다)
+	// (이 부분은 원하는 게임 논리로 변경해야 합니다.
 
 	if (event.key === 'ArrowLeft') {
 		keyFlag = [1, 0, 0, 0];

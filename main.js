@@ -12,7 +12,7 @@ requestAnimationFrame(() => {
 });
 // 페이지가 로드될 때 canvas에 포커스를 주기
 window.addEventListener('load', () => {
-	console.table(canvas.reset());
+	canvas.reset();
 	initiatedCanvas.width = constant.ROW * constant.double;
 	initiatedCanvas.height = constant.COLUMN * constant.double;
 	initiatedCanvas.focus();
