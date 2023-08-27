@@ -2,6 +2,7 @@
 import { constant } from './constant.js';
 import { newBlock as piece } from './piece.js';
 import { ctx } from './main.js';
+import { canvas } from './canvas.js';
 
 let x = 0;
 let y = 0;
@@ -10,8 +11,26 @@ let xDirection = [];
 let yDirection = [];
 //키 누를시 마다 1로 변함
 let keyFlag = [0, 0, 0, 0];
-let array = JSON.parse(JSON.stringify([...piece.initBlock])); // Deep copy of the initial array
+export let array = JSON.parse(JSON.stringify([...piece.initBlock])); // Deep copy of the initial array
 let rotations = 0;
+const blockArray = [array];
+let blockCount = 0;
+
+function freeze(block) {
+	block.forEach((row, columnIdx) => {
+		row.forEach((el, rowIdx) => {
+			if (el > 0) {
+				ctx.fillRect(
+					x + (rowIdx + 4),
+					y + columnIdx,
+					constant.double,
+					constant.double
+				);
+			}
+		});
+	});
+	return piece.generateRandomBlock().initBlock;
+}
 
 export function animate(now, time) {
 	// 지난 시간을 업데이트한다.
@@ -28,7 +47,22 @@ export function animate(now, time) {
 		);
 		y += 20;
 
-		drawBoard(x, y, ctx, piece.initBlock);
+		if (yDirection.some((el) => Math.abs(el) > 600)) {
+			canvas.freeze();
+			const newBlock = freeze(array);
+			blockArray.push(newBlock);
+			blockCount += 1;
+			//-----초기화
+			x = 0;
+			y = 0;
+			xDirection = [];
+			yDirection = [];
+			keyFlag = [0, 0, 0, 0];
+			array = JSON.parse(JSON.stringify([...newBlock]));
+			rotations = 0;
+			//------초기화 끝
+		}
+		drawBoard(x, y, ctx, array);
 		console.log(y);
 	}
 
@@ -55,7 +89,7 @@ function rotateArrayClockwise() {
 
 	if (rotations === 4) {
 		// 네 번 회전한 후에는 초기 배열로 돌아감
-		array = JSON.parse(JSON.stringify([...piece.initBlock]));
+		array = JSON.parse(JSON.stringify([...blockArray[blockCount]]));
 		rotations = 0;
 	}
 
@@ -96,13 +130,6 @@ function isValid() {
 	return true;
 }
 
-export function setCanvas(canvas, ctx) {
-	canvas.width = constant.ROW * constant.double;
-	canvas.height = constant.COLUMN * constant.double;
-
-	drawBoard(x, y, ctx, piece.initBlock);
-}
-
 export function drawBoard(x, y, ctx, block) {
 	if (isValid()) {
 		ctx.clearRect(
@@ -113,16 +140,17 @@ export function drawBoard(x, y, ctx, block) {
 		);
 		xDirection = [];
 		yDirection = [];
+
 		block.forEach((row, columnIdx) => {
 			row.forEach((el, rowIdx) => {
-				xDirection.push(x + (rowIdx + 4) * constant.double);
-				yDirection.push(y + columnIdx * constant.double);
+				xDirection.push(x + (rowIdx + 4));
+				yDirection.push(y + columnIdx);
 
 				if (el >= 1) {
 					let colorVariable = Object.values(constant.colors[el - 1])[0];
 					ctx.fillStyle = colorVariable;
 					ctx.fillRect(
-						x + (rowIdx + 4) * constant.double,
+						x + rowIdx * constant.double,
 						y + columnIdx * constant.double,
 						constant.double,
 						constant.double

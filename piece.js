@@ -58,12 +58,15 @@ class Piece {
 			row.map((value) => (value === 9 ? num : value))
 		);
 	}
+	generateRandomBlock() {
+		// 무작위 블록 생성 로직 (shuffle 함수 등 사용)
+		const randomNumber = Math.floor(Math.random() * 3) + 1;
+		return new Piece(randomNumber);
+	}
+
 	changeBlock(array) {
 		this.initBlock = [...array];
 	}
-	// animate() {
-	// 	requestAnimationFrame(this.animate.bind(this));
-	// }
 }
 export const newBlock = new Piece(randomNumber());
 // export const initPiece = a.initBlock;

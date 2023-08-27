@@ -1,6 +1,6 @@
 export const constant = {
-	ROW: 3 * 4,
-	COLUMN: 3 * 7,
+	ROW: 3 * 3,
+	COLUMN: 3 * 6,
 	double: 40,
 	colors: [{ 1: 'blue' }, { 2: 'red' }, { 3: 'yellow' }, { 4: 'green' }],
 	keys: { ArrowLeft: 0, ArrowRight: 1, ArrowUp: 2, ArrowDown: 3 },
