@@ -10,7 +10,6 @@ export class Canvas {
     this.xDirection = [];
     this.yDirection = [];
     this.keyFlag = [0, 0, 0, 0];
-    // this.array = JSON.parse(JSON.stringify([...this.piece])); // Deep copy of the initial array
     this.rotations = 0;
     this.blockCount = 0;
     this.blockArray = [];
@@ -22,6 +21,21 @@ export class Canvas {
       Array(constant.ROW).fill(0)
     );
     return this.grid;
+  }
+  newBlock() {
+    this.x = 3;
+    this.y = 0;
+    this.xDirection = [];
+    this.yDirection = [];
+    this.keyFlag = [0, 0, 0, 0];
+    this.rotations = 0;
+
+    const newBlock = new Piece().initBlock;
+    console.log(newBlock);
+    this.blockArray.push(newBlock);
+    console.log(this.blockArray);
+    this.blockCount += 1;
+    this.piece = newBlock;
   }
   drawBoard() {
     this.grid.forEach((row, y) => {
@@ -35,10 +49,7 @@ export class Canvas {
   }
   draw(x, y, ctx) {
     if (this.isValid()) {
-      console.log(this.piece);
       ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-
-      //===새 블록 생성 끝
       this.piece.forEach((row, columnIdx) => {
         this.xDirection = [];
         this.yDirection = [];
@@ -54,21 +65,14 @@ export class Canvas {
               this.yDirection.some((el) => Math.abs(el) === constant.COLUMN - 1)
             ) {
               this.freeze();
-              //새 블록을 생성함.
+              return;
 
-              //-----초기화
-              this.x = 3;
-              this.y = 0;
-              this.xDirection = [];
-              this.yDirection = [];
-              this.keyFlag = [0, 0, 0, 0];
-              // array = JSON.parse(JSON.stringify([...newBlock]));
-              this.rotations = 0;
               //------초기화 끝
             }
           }
         });
       });
+
       this.drawBoard();
     }
   }
@@ -146,15 +150,8 @@ export class Canvas {
         }
       });
     });
-    //grid에 그리고 나서 newBlock 생성
-    const newBlock = new Piece().initBlock;
-    this.blockArray.push(newBlock);
-    this.blockCount += 1;
-    this.piece = newBlock;
-
-    console.log(this.grid);
-
-    // this.piece = array;
+    this.newBlock();
+    //FIX: grid에 그리고 나서 newBlock 생성
   }
   rotateArrayClockwise() {
     const numRows = array.length;
