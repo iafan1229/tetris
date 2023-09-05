@@ -35,30 +35,34 @@ export class Canvas {
     if (this.isValid()) {
       ctx.clearRect(0, 0, constant.ROW, constant.COLUMN);
       // console.log(block);
-      this.xDirection = [];
-      this.yDirection = [];
+
       block.forEach((row, columnIdx) => {
+        this.xDirection = [];
+        this.yDirection = [];
         row.forEach((el, rowIdx) => {
           this.xDirection.push(x + rowIdx);
           this.yDirection.push(y + columnIdx);
-          if (this.yDirection.some((el) => Math.abs(el) === 11)) {
-            this.freeze();
-            // const newBlock = this.freeze(array);
-            // this.blockArray.push(newBlock);
-            this.blockCount += 1;
-            //-----초기화
-            this.x = 3;
-            this.y = 0;
-            this.xDirection = [];
-            this.yDirection = [];
-            this.keyFlag = [0, 0, 0, 0];
-            // array = JSON.parse(JSON.stringify([...newBlock]));
-            this.rotations = 0;
-            //------초기화 끝
-          } else if (el >= 1) {
+          console.log(this.yDirection);
+          if (el >= 1) {
             let colorVariable = Object.values(constant.colors[el - 1])[0];
             ctx.fillStyle = colorVariable;
             ctx.fillRect(x + rowIdx, y + columnIdx, 1, 1);
+            //끝에 도달하면
+            if (this.yDirection.some((el) => Math.abs(el) === 11)) {
+              this.freeze();
+              // const newBlock = this.freeze(array);
+              // this.blockArray.push(newBlock);
+              this.blockCount += 1;
+              //-----초기화
+              this.x = 3;
+              this.y = 0;
+              this.xDirection = [];
+              this.yDirection = [];
+              this.keyFlag = [0, 0, 0, 0];
+              // array = JSON.parse(JSON.stringify([...newBlock]));
+              this.rotations = 0;
+              //------초기화 끝
+            }
           }
         });
       });
@@ -73,7 +77,6 @@ export class Canvas {
       // 현재 시간을 다시 측정한다.
       time.start = now;
       this.y += 1;
-
       this.draw(this.x, this.y, this.ctx, this.piece);
     }
 
@@ -119,12 +122,12 @@ export class Canvas {
     ) {
       return false;
     }
-    // if (
-    //   this.yDirection.some((el) => Math.abs(el) === 360) &&
-    //   keyFlag.findIndex((el) => el === 1) === 3
-    // ) {
-    //   return false;
-    // }
+    if (
+      this.yDirection.some((el) => Math.abs(el) === 11) &&
+      keyFlag.findIndex((el) => el === 1) === 3
+    ) {
+      return false;
+    }
 
     return true;
   }
