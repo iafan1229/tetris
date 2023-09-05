@@ -1,4 +1,5 @@
 import { constant } from "./constant.js";
+import { Piece } from "./piece.js";
 
 export class Canvas {
   constructor(ctx, piece) {
@@ -12,6 +13,7 @@ export class Canvas {
     // this.array = JSON.parse(JSON.stringify([...this.piece])); // Deep copy of the initial array
     this.rotations = 0;
     this.blockCount = 0;
+    this.blockArray = [];
   }
 
   // 새 게임이 시작되면 보드를 초기화한다.
@@ -31,28 +33,29 @@ export class Canvas {
       });
     });
   }
-  draw(x, y, ctx, block) {
+  draw(x, y, ctx) {
     if (this.isValid()) {
-      ctx.clearRect(0, 0, constant.ROW, constant.COLUMN);
-      // console.log(block);
+      console.log(this.piece);
+      ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-      block.forEach((row, columnIdx) => {
+      //===새 블록 생성 끝
+      this.piece.forEach((row, columnIdx) => {
         this.xDirection = [];
         this.yDirection = [];
         row.forEach((el, rowIdx) => {
           this.xDirection.push(x + rowIdx);
           this.yDirection.push(y + columnIdx);
-          console.log(this.yDirection);
           if (el >= 1) {
             let colorVariable = Object.values(constant.colors[el - 1])[0];
             ctx.fillStyle = colorVariable;
             ctx.fillRect(x + rowIdx, y + columnIdx, 1, 1);
-            //끝에 도달하면
-            if (this.yDirection.some((el) => Math.abs(el) === 11)) {
+            //끝에 도달하면(18개 칸 중 17번째)
+            if (
+              this.yDirection.some((el) => Math.abs(el) === constant.COLUMN - 1)
+            ) {
               this.freeze();
-              // const newBlock = this.freeze(array);
-              // this.blockArray.push(newBlock);
-              this.blockCount += 1;
+              //새 블록을 생성함.
+
               //-----초기화
               this.x = 3;
               this.y = 0;
@@ -66,21 +69,23 @@ export class Canvas {
           }
         });
       });
+      this.drawBoard();
     }
-    this.drawBoard();
   }
   animate(now, time) {
     // 지난 시간을 업데이트한다.
     time.elapsed = now - time.start;
-    // // 지난 시간이 현재 레벨의 시간을 초과했는지 확인한다.
+    // 지난 시간이 현재 레벨의 시간을 초과했는지 확인한다.
     if (time.elapsed > time.level) {
       // 현재 시간을 다시 측정한다.
       time.start = now;
       this.y += 1;
-      this.draw(this.x, this.y, this.ctx, this.piece);
+      this.draw(this.x, this.y, this.ctx);
     }
 
-    requestAnimationFrame(() => this.animate(Date.now(), constant.time));
+    requestAnimationFrame(() => {
+      this.animate(Date.now(), constant.time);
+    });
   }
   move(event) {
     // 화살표 키 입력을 감지하고 블록을 이동합니다.
@@ -122,17 +127,16 @@ export class Canvas {
     ) {
       return false;
     }
-    if (
-      this.yDirection.some((el) => Math.abs(el) === 11) &&
-      keyFlag.findIndex((el) => el === 1) === 3
-    ) {
-      return false;
-    }
+    // if (
+    //   this.yDirection.some((el) => Math.abs(el) === 0) &&
+    //   keyFlag.findIndex((el) => el === 1) === 3
+    // ) {
+    //   return false;
+    // }
 
     return true;
   }
   freeze() {
-    // this.piece = [...array];
     this.piece.forEach((row, y) => {
       row.forEach((value, x) => {
         if (value >= 1) {
@@ -142,7 +146,14 @@ export class Canvas {
         }
       });
     });
+    //grid에 그리고 나서 newBlock 생성
+    const newBlock = new Piece().initBlock;
+    this.blockArray.push(newBlock);
+    this.blockCount += 1;
+    this.piece = newBlock;
+
     console.log(this.grid);
+
     // this.piece = array;
   }
   rotateArrayClockwise() {

@@ -1,4 +1,4 @@
-import { newBlock as piece } from "./piece.js";
+import { Piece } from "./piece.js";
 import { Canvas } from "./canvas.js";
 import { constant } from "./constant.js";
 
@@ -6,11 +6,15 @@ import { constant } from "./constant.js";
 
 const initiatedCanvas = document.getElementById("myCanvas");
 const ctx = initiatedCanvas.getContext("2d");
-ctx.canvas.width = 270;
-ctx.canvas.height = 360;
+ctx.canvas.width = constant.ROW * 30;
+ctx.canvas.height = constant.COLUMN * 30;
+
 ctx.scale(30, 30);
 
 const instance = new Canvas();
+
+//0번째 블록
+const piece = new Piece();
 
 instance.ctx = ctx;
 instance.piece = piece.initBlock;
