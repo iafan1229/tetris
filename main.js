@@ -15,7 +15,7 @@ const instance = new Canvas();
 instance.ctx = ctx;
 instance.piece = piece.initBlock;
 instance.reset();
-console.log(instance.grid);
+
 requestAnimationFrame(() => {
   instance.animate(Date.now(), constant.time);
 });

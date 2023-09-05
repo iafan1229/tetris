@@ -2,7 +2,7 @@ import { constant } from "./constant.js";
 
 export class Canvas {
   constructor(ctx, piece) {
-    this.x = 0;
+    this.x = 3;
     this.y = 0;
     this.ctx = ctx;
     this.piece = piece;
@@ -16,23 +16,26 @@ export class Canvas {
 
   // 새 게임이 시작되면 보드를 초기화한다.
   reset() {
-    this.grid = this.getEmptyBoard();
+    this.grid = Array.from({ length: constant.COLUMN }, () =>
+      Array(constant.ROW).fill(0)
+    );
     return this.grid;
   }
   draw(x, y, ctx, block) {
     if (this.isValid()) {
-      // ctx.clearRect(0, 0, constant.COLUMN, constant.ROW);
+      ctx.clearRect(0, 0, constant.COLUMN, constant.ROW);
       // console.log(block);
       block.forEach((row, columnIdx) => {
         row.forEach((el, rowIdx) => {
-          this.xDirection.push(x + (rowIdx + 4));
+          this.xDirection.push(x + rowIdx);
           this.yDirection.push(y + columnIdx);
 
           if (el >= 1) {
+            console.log(el);
             let colorVariable = Object.values(constant.colors[el - 1])[0];
             ctx.fillStyle = colorVariable;
 
-            ctx.fillRect(x, y, 1, 1);
+            ctx.fillRect(x + rowIdx, y + columnIdx, 1, 1);
           }
         });
       });
@@ -46,22 +49,22 @@ export class Canvas {
       // 현재 시간을 다시 측정한다.
       time.start = now;
       // this.ctx.clearRect(0, 0, constant.ROW, constant.COLUMN);
-      this.y += 20;
-      // if (this.yDirection.some((el) => Math.abs(el) > constant.COLUMN)) {
-      //   canvas.freeze(x, y);
-      //   const newBlock = freeze(array);
-      //   this.blockArray.push(newBlock);
-      //   this.blockCount += 1;
-      //   //-----초기화
-      //   this.x = 0;
-      //   this.y = 0;
-      //   this.xDirection = [];
-      //   this.yDirection = [];
-      //   this.keyFlag = [0, 0, 0, 0];
-      //   // array = JSON.parse(JSON.stringify([...newBlock]));
-      //   this.rotations = 0;
-      //   //------초기화 끝
-      // }
+      this.y += 1;
+      if (this.yDirection.some((el) => Math.abs(el) > 360)) {
+        this.freeze(x, y);
+        const newBlock = freeze(array);
+        this.blockArray.push(newBlock);
+        this.blockCount += 1;
+        //-----초기화
+        this.x = 3;
+        this.y = 0;
+        this.xDirection = [];
+        this.yDirection = [];
+        this.keyFlag = [0, 0, 0, 0];
+        // array = JSON.parse(JSON.stringify([...newBlock]));
+        this.rotations = 0;
+        //------초기화 끝
+      }
 
       this.draw(this.x, this.y, this.ctx, this.piece);
     }
@@ -119,34 +122,21 @@ export class Canvas {
 
     return true;
   }
-
-  // 0으로 채워진 행렬을 얻는다.
-  getEmptyBoard() {
-    return Array.from({ length: constant.COLUMN }, () =>
-      Array(constant.ROW).fill(0)
-    );
-  }
   freeze(x, y) {
     // this.piece = [...array];
-    // this.piece.forEach((row, columnIdx) => {
-    //   // row.forEach((el, rowIdx) => {
-    //   // 	if (el >= 1) {
-    //   // 		// 현재 블록의 각 셀을 게임 보드에 고정
-    //   // 		console.table(this.piece); //0+9-3
-    //   // 		const boardY = Math.floor(
-    //   // 			(x + rowIdx * constant.double) / constant.double
-    //   // 		);
-    //   // 		console.log(boardY);
-    //   // 		// const boardX = Math.floor(
-    //   // 		// 	(y + rowIdx * constant.double) / constant.double
-    //   // 		// );
-    //   // 		// const boardY = columnI
-    //   // 		// 게임 보드에 값을 설정 (9는 블록이 차있는 상태를 나타냄)
-    //   // 		// this.grid[][] = el;
-    //   // 		this.grid[boardY][0] = el;
-    //   // 	}
-    //   // });
-    // });
+    this.piece.forEach((row, columnIdx) => {
+      row.forEach((el, rowIdx) => {
+        if (el >= 1) {
+          // 현재 블록의 각 셀을 게임 보드에 고정
+          console.table(this.piece); //0+9-3
+          const boardY = y + columnIdx;
+          const boardX = x + rowIdx;
+          console.log(boardY);
+          // 게임 보드에 값을 설정 (9는 블록이 차있는 상태를 나타냄)
+          this.grid[boardX][boardY] = el;
+        }
+      });
+    });
     // this.piece = array;
   }
   rotateArrayClockwise() {
